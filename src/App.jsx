@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
+import logo from './assets/Asset-6-2-1.png'
 import './App.css'
 
+const flagUrl = (code) => `https://flagcdn.com/w640/${code}.png`
+const flagSrcSet = (code) => `https://flagcdn.com/w320/${code}.png 1x, https://flagcdn.com/w640/${code}.png 2x`
+
 const COUNTRIES = [
-  { flag: '🇺🇸', name: 'USA', tag: '4,000+ universities', desc: 'World-class research, OPT pathway, global alumni networks.' },
-  { flag: '🇨🇦', name: 'Canada', tag: 'PGWP up to 3 yrs', desc: 'Affordable tuition, friendly PR pathway, top-ranked schools.' },
-  { flag: '🇦🇺', name: 'Australia', tag: 'Post-study work visa', desc: 'Group of Eight institutions and high quality of life.' },
-  { flag: '🇳🇿', name: 'New Zealand', tag: 'STEM focus', desc: 'Globally recognized degrees and welcoming culture.' },
-  { flag: '🇪🇺', name: 'Europe', tag: 'Low / No tuition', desc: 'Germany, Ireland, France, Netherlands — English-taught masters.' },
+  { code: 'us', name: 'USA', tag: '4,000+ universities', desc: 'World-class research, OPT pathway, global alumni networks.' },
+  { code: 'ca', name: 'Canada', tag: 'PGWP up to 3 yrs', desc: 'Affordable tuition, friendly PR pathway, top-ranked schools.' },
+  { code: 'au', name: 'Australia', tag: 'Post-study work visa', desc: 'Group of Eight institutions and high quality of life.' },
+  { code: 'nz', name: 'New Zealand', tag: 'STEM focus', desc: 'Globally recognized degrees and welcoming culture.' },
+  { code: 'eu', name: 'Europe', tag: 'Low / No tuition', desc: 'Germany, Ireland, France, Netherlands — English-taught masters.' },
 ]
 
 const SERVICES = [
@@ -49,7 +53,61 @@ const FAQ = [
   { q: 'Do you assist after I reach the country?', a: 'Absolutely. Airport pickup coordination, SIM, bank account, accommodation and part-time job guidance are all included.' },
 ]
 
-function Navbar() {
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') return 'light'
+    const saved = localStorage.getItem('kes-theme')
+    if (saved) return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('kes-theme', theme)
+  }, [theme])
+  return [theme, () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))]
+}
+
+function ThemeToggle({ theme, onToggle }) {
+  const dark = theme === 'dark'
+  return (
+    <button
+      className={`theme-toggle ${dark ? 'is-dark' : ''}`}
+      onClick={onToggle}
+      aria-label={`Switch to ${dark ? 'light' : 'dark'} mode`}
+      title={`Switch to ${dark ? 'light' : 'dark'} mode`}
+    >
+      <span className="theme-toggle__track">
+        <span className="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">☀</span>
+        <span className="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">☾</span>
+        <span className="theme-toggle__thumb" />
+      </span>
+    </button>
+  )
+}
+
+function Preloader({ hidden }) {
+  return (
+    <div className={`preloader ${hidden ? 'is-hidden' : ''}`} aria-hidden={hidden}>
+      <div className="preloader__bg" />
+      <div className="preloader__inner">
+        <div className="preloader__logo">
+          <span className="preloader__ring r-a" />
+          <span className="preloader__ring r-b" />
+          <span className="preloader__ring r-c" />
+          <img src={logo} alt="KES Global" />
+        </div>
+        <div className="preloader__text">
+          <span>K</span><span>E</span><span>S</span>
+          <span className="space"> </span>
+          <span>G</span><span>l</span><span>o</span><span>b</span><span>a</span><span>l</span>
+        </div>
+        <div className="preloader__bar"><span /></div>
+      </div>
+    </div>
+  )
+}
+
+function Navbar({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -77,8 +135,7 @@ function Navbar() {
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
       <div className="nav__inner container">
         <a href="#top" className="logo" onClick={() => setOpen(false)}>
-          <span className="logo__mark" aria-hidden="true">K</span>
-          <span className="logo__text">KES <em>Global</em></span>
+          <img src={logo} alt="KES Global Consultancy" className="logo__img" />
         </a>
 
         <nav className="nav__links" aria-label="Primary">
@@ -87,7 +144,10 @@ function Navbar() {
           ))}
         </nav>
 
-        <a href="#contact" className="btn btn--primary nav__cta">Free Consultation</a>
+        <div className="nav__right">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+          <a href="#contact" className="btn btn--primary nav__cta">Free Consultation</a>
+        </div>
 
         <button
           className={`hamburger ${open ? 'is-open' : ''}`}
@@ -100,12 +160,47 @@ function Navbar() {
       </div>
 
       <div className={`drawer ${open ? 'is-open' : ''}`} role="dialog" aria-hidden={!open}>
-        <nav className="drawer__links">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</a>
-          ))}
-          <a href="#contact" className="btn btn--primary" onClick={() => setOpen(false)}>Free Consultation</a>
-        </nav>
+        <div className="drawer__inner">
+          <nav className="drawer__links" aria-label="Mobile">
+            {links.map((l, i) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                style={{ '--i': i }}
+              >
+                <span className="drawer__num">0{i + 1}</span>
+                <span className="drawer__label">{l.label}</span>
+                <span className="drawer__arrow" aria-hidden="true">→</span>
+              </a>
+            ))}
+          </nav>
+
+          <div className="drawer__bottom">
+            <a href="#contact" className="btn btn--primary drawer__cta" onClick={() => setOpen(false)}>
+              Free Consultation
+            </a>
+
+            <div className="drawer__theme">
+              <div>
+                <strong>Appearance</strong>
+                <span>{theme === 'dark' ? 'Dark mode' : 'Light mode'}</span>
+              </div>
+              <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </div>
+
+            <ul className="drawer__contact">
+              <li>
+                <span className="drawer__contact-icon">📞</span>
+                <a href="tel:+919900006564">+91 99000 06564</a>
+              </li>
+              <li>
+                <span className="drawer__contact-icon">✉️</span>
+                <a href="mailto:info@kesglobalconsultancy.com">info@kesglobalconsultancy.com</a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </header>
   )
@@ -164,11 +259,11 @@ function Hero() {
               <div className="ring r1" />
               <div className="ring r2" />
               <div className="ring r3" />
-              <div className="pin p1">🇺🇸</div>
-              <div className="pin p2">🇨🇦</div>
-              <div className="pin p3">🇦🇺</div>
-              <div className="pin p4">🇪🇺</div>
-              <div className="pin p5">🇳🇿</div>
+              <div className="pin p1"><img src={flagUrl('us')} alt="USA" /></div>
+              <div className="pin p2"><img src={flagUrl('ca')} alt="Canada" /></div>
+              <div className="pin p3"><img src={flagUrl('au')} alt="Australia" /></div>
+              <div className="pin p4"><img src={flagUrl('eu')} alt="Europe" /></div>
+              <div className="pin p5"><img src={flagUrl('nz')} alt="New Zealand" /></div>
             </div>
           </div>
         </div>
@@ -246,7 +341,9 @@ function Destinations() {
         <div className="dest__grid">
           {COUNTRIES.map((c) => (
             <article className="dest__card" key={c.name}>
-              <div className="dest__flag">{c.flag}</div>
+              <div className="dest__flag">
+                <img src={flagUrl(c.code)} srcSet={flagSrcSet(c.code)} alt={`${c.name} flag`} loading="lazy" />
+              </div>
               <div className="dest__body">
                 <h3>{c.name}</h3>
                 <span className="chip">{c.tag}</span>
@@ -421,8 +518,7 @@ function Footer() {
       <div className="container footer__inner">
         <div className="footer__brand">
           <a href="#top" className="logo">
-            <span className="logo__mark logo__mark--light" aria-hidden="true">K</span>
-            <span className="logo__text logo__text--light">KES <em>Global</em></span>
+            <img src={logo} alt="KES Global Consultancy" className="logo__img logo__img--footer" />
           </a>
           <p>Krisnika Eduverse Solutions Pvt. Ltd. — Your trusted partner for global education.</p>
         </div>
@@ -465,9 +561,26 @@ function Footer() {
 }
 
 export default function App() {
+  const [theme, toggleTheme] = useTheme()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const onLoad = () => {
+      setTimeout(() => setLoading(false), 600)
+    }
+    if (document.readyState === 'complete') onLoad()
+    else window.addEventListener('load', onLoad)
+    const fallback = setTimeout(() => setLoading(false), 2400)
+    return () => {
+      window.removeEventListener('load', onLoad)
+      clearTimeout(fallback)
+    }
+  }, [])
+
   return (
     <>
-      <Navbar />
+      <Preloader hidden={!loading} />
+      <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <main>
         <Hero />
         <Why />

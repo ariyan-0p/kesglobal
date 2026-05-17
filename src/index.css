@@ -1,6 +1,7 @@
-:root {
-  --bg: #0b1020;
-  --bg-2: #0f1530;
+:root, html[data-theme='light'] {
+  --page-bg: #fafbff;
+  --section-bg: #fafbff;
+  --section-bg-2: #f3f4fb;
   --surface: #ffffff;
   --ink: #0b1020;
   --ink-2: #1f2540;
@@ -20,6 +21,61 @@
   --container: 1200px;
   --gutter: clamp(16px, 4vw, 32px);
   --grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
+  --nav-scrolled-bg: rgba(255, 255, 255, 0.85);
+  --bento-icon-bg: linear-gradient(135deg, #eef0ff, #f5edff);
+  --flag-bg: linear-gradient(135deg, #eef0ff, #faf3ff);
+  --hero-bg: linear-gradient(180deg, #eef1ff 0%, #f6edff 55%, #e8f4ff 100%);
+  --hero-ink: #0b1020;
+  --hero-ink-soft: #5a6385;
+  --hero-eyebrow-bg: rgba(79, 70, 229, 0.08);
+  --hero-eyebrow-ink: #4f46e5;
+  --hero-eyebrow-border: rgba(79, 70, 229, 0.2);
+  --hero-stats-border: rgba(11, 16, 32, 0.08);
+  --hero-card-bg: rgba(255, 255, 255, 0.7);
+  --hero-card-border: rgba(11, 16, 32, 0.08);
+  --hero-card-shadow: 0 20px 50px -20px rgba(79, 70, 229, 0.35);
+  --hero-grid-line: rgba(11, 16, 32, 0.06);
+  --hero-blob-opacity: 0.35;
+  --hero-ghost-bg: transparent;
+  --hero-ghost-border: rgba(11, 16, 32, 0.12);
+  --hero-ghost-ink: #0b1020;
+  --hero-marquee-ink: rgba(11, 16, 32, 0.45);
+  --hero-ring-color: rgba(11, 16, 32, 0.12);
+}
+
+html[data-theme='dark'] {
+  --page-bg: #07091a;
+  --section-bg: #0b1020;
+  --section-bg-2: #0f1530;
+  --surface: #121734;
+  --ink: #f4f5fb;
+  --ink-2: #d6dafd;
+  --muted: #9aa3c7;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.06);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 30px 60px -20px rgba(79, 70, 229, 0.55);
+  --nav-scrolled-bg: rgba(11, 16, 32, 0.85);
+  --bento-icon-bg: linear-gradient(135deg, rgba(79, 70, 229, 0.22), rgba(124, 58, 237, 0.22));
+  --flag-bg: linear-gradient(135deg, #1a1f4a, #2d1b5a);
+  --hero-bg: linear-gradient(180deg, #0b1020 0%, #0f1530 60%, #161c40 100%);
+  --hero-ink: #ffffff;
+  --hero-ink-soft: rgba(255, 255, 255, 0.75);
+  --hero-eyebrow-bg: rgba(255, 255, 255, 0.08);
+  --hero-eyebrow-ink: #cbd0ee;
+  --hero-eyebrow-border: rgba(255, 255, 255, 0.14);
+  --hero-stats-border: rgba(255, 255, 255, 0.1);
+  --hero-card-bg: rgba(255, 255, 255, 0.08);
+  --hero-card-border: rgba(255, 255, 255, 0.16);
+  --hero-card-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  --hero-grid-line: rgba(255, 255, 255, 0.06);
+  --hero-blob-opacity: 0.55;
+  --hero-ghost-bg: rgba(255, 255, 255, 0.04);
+  --hero-ghost-border: rgba(255, 255, 255, 0.2);
+  --hero-ghost-ink: #ffffff;
+  --hero-marquee-ink: rgba(255, 255, 255, 0.6);
+  --hero-ring-color: rgba(255, 255, 255, 0.2);
 }
 
 * { box-sizing: border-box; }
@@ -30,12 +86,13 @@ html, body { margin: 0; padding: 0; }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #fafbff;
+  background: var(--page-bg);
   color: var(--ink);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 img, svg { display: block; max-width: 100%; height: auto; }
